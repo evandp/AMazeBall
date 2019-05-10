@@ -1,7 +1,7 @@
 #include <fsl_i2c.h>
 
 int main() {
-		
+	
 	SIM->SCGC4 |= SIM_SCGC4_I2C0_MASK;
 	I2C0->C1 = I2C_C1_IICEN(1);
 	I2C0->C1 = I2C_C1_IICIE(1);
