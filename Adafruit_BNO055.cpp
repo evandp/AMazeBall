@@ -30,7 +30,7 @@
 #include <limits.h>
 #include <math.h>
 #include <fsl_i2c.h>
-#include <ctime>
+#include <time.h>
 
 #include "Adafruit_BNO055.h"
 
@@ -420,7 +420,7 @@ int8_t Adafruit_BNO055::getTemp() {
  *  @return  vector from specified source
  */
 imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
-  imu::Vector<3> xyz;
+  imu::Vector<3> xyz = *(new imu::Vector<3>());
   uint8_t buffer[6];
   memset(buffer, 0, 6);
 
@@ -541,14 +541,14 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
   event->version = sizeof(sensors_event_t);
   event->sensor_id = _sensorID;
   event->type = SENSOR_TYPE_ORIENTATION;
-  event->timestamp = std::time(0);
+  event->timestamp = static_cast<int32_t>(time(0));
 
   /* Get a Euler angle sample for orientation */
   imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
   event->orientation.x = euler.x();
   event->orientation.y = euler.y();
   event->orientation.z = euler.z();
-
+	delete &euler;
   return true;
 }
 
@@ -566,7 +566,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
 
   event->version = sizeof(sensors_event_t);
   event->sensor_id = _sensorID;
-  event->timestamp = std::time(0);
+  event->timestamp = time(0);
 
   //read the data according to vec_type
   imu::Vector<3> vec;
@@ -625,7 +625,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
     event->magnetic.z = vec.z();
   }
   
-
+	delete &vec;
   return true;
 }
 
