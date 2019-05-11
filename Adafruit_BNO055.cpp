@@ -47,7 +47,7 @@ void delay(uint16_t milli) {
 	uint16_t j;
 	for(i=0; i<milli; i++) {
 		for(j=0; j<N; j++) {
-			__asm("nop");  //in CW tools use asm("nop");
+			__asm("nop"); 
 		}	
 	}
 }
@@ -94,6 +94,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
 
   /* Enable I2C */
 	
+	SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK; //Enable the clock to port E
 	SIM->SCGC4 |= SIM_SCGC4_I2C0_MASK;
 	I2C0->C1 = I2C_C1_IICEN(1);
 	I2C0->C1 = I2C_C1_IICIE(1);
@@ -541,7 +542,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
   event->version = sizeof(sensors_event_t);
   event->sensor_id = _sensorID;
   event->type = SENSOR_TYPE_ORIENTATION;
-  event->timestamp = static_cast<int32_t>(time(0));
+  event->timestamp = event->timestamp++;//static_cast<int32_t>(time(0));
 
   /* Get a Euler angle sample for orientation */
   imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
