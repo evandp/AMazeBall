@@ -55,7 +55,7 @@ int main() {
 	event->type = 0;
 	
 	sensor = Adafruit_BNO055(BNO055_ID, BNO055_ADDRESS_A);
-
+	
 	sensor.begin();
 	
 	setup();
