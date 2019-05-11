@@ -1,4 +1,5 @@
 #include <fsl_i2c.h>
+#include "Adafruit_BNO055.h"
 
 int main() {
 	
@@ -34,4 +35,21 @@ int main() {
 	I2C_MasterTransferBlocking(I2C0, &transfer);
 	
 	return 0;
+}
+
+
+/* 
+     PIT Interrupt Handler
+*/
+void PIT0_IRQHandler(void)
+{
+	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(0); //disable interrupts
+	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF(1); //reset flag
+	
+	sensors_event_t event;
+	
+	
+	
+	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
+	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE(1);
 }
