@@ -209,6 +209,26 @@ void MatrixController::update_pixel(int x, int y, bool r, bool g, bool b) {
 	matrix[x][y] = p;
 }
 
+/**
+Draws a vertical line starting at row = start_x, ending at row = end_x.
+Requires: start_x <= end_x
+*/
+void draw_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b) {
+	for (int i = start_x; i <= end_x; i++) {
+		MatrixController::update_pixel(i, y, r, g, b);
+	}
+}
+
+/**
+Draws a horizontal line starting at col = start_y, ending at col = end_y.
+Requires: start_y <= end_y
+*/
+void draw_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b) {
+	for (int j = start_y; j <= end_y; j++) {
+		MatrixController::update_pixel(x, j, r, g, b);
+	}
+}
+
 extern "C" void PIT0_IRQHandler(void)
 {
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(0); //disable interrupts

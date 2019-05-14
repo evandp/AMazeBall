@@ -12,6 +12,8 @@ class MatrixController {
 	
 	public:	
 		static void update_pixel(int x, int y, bool r, bool g, bool b);
+		static void write_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b);
+		static void write_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b);
 		static void write_matrix();
 		static void init_matrix();
 		static void init_timer();
