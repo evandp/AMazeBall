@@ -1,13 +1,6 @@
 #include <fsl_device_registers.h>
 #include <fsl_gpio.h>
 
-/*
-General scheme for sending data:
-(1) clear (sets output to 0) : GPION->PCOR = (1 << bitnum);
-(2) set (sets output to 1) : GPION->PSOR = (1 << bitnum);
-
-*/
-
 
 #define clear_clk() (GPIO_PinWrite(clk_p, clk_s, 0))
 #define set_clk() (GPIO_PinWrite(clk_p, clk_s, 1))
@@ -188,6 +181,8 @@ int main() {
 	
 	set_oe(); //disable LED output
 	set_lat(); //latch data from previous interrupt
+	
+	clear_row();
 	
 	//set_row(row);
 	GPIO_PinWrite(a_p, a_s, 0);
