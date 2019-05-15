@@ -5,6 +5,12 @@ int r1_s, g1_s, b1_s, r2_s, g2_s, b2_s, a_s, b_s, c_s, d_s, lat_s, oe_s, clk_s;
 
 MatrixController::pixel_t MatrixController::matrix[32][32] = {};
 
+void MatrixController::init() {
+	init_matrix();
+	init_gpio();
+	init_timer();
+}
+	
 void MatrixController::init_matrix() {
 	for (int i = 0; i < 32; i++) {
 		for (int j = 0; j < 32; j++) {
@@ -26,6 +32,7 @@ void MatrixController::init_timer() {
 	PIT->CHANNEL[0].LDVAL = DEFAULT_SYSTEM_CLOCK / 250; //set timer to 1/60 seconds
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TIE(1); //enable interrupts
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN(1);
+	NVIC_SetPriority(PIT0_IRQn, 0);
 }
 
 void MatrixController::init_gpio() {
@@ -213,7 +220,7 @@ void MatrixController::update_pixel(int x, int y, bool r, bool g, bool b) {
 Draws a vertical line starting at row = start_x, ending at row = end_x.
 Requires: start_x <= end_x
 */
-void draw_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b) {
+void MatrixController::draw_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b) {
 	for (int i = start_x; i <= end_x; i++) {
 		MatrixController::update_pixel(i, y, r, g, b);
 	}
@@ -223,7 +230,7 @@ void draw_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b) {
 Draws a horizontal line starting at col = start_y, ending at col = end_y.
 Requires: start_y <= end_y
 */
-void draw_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b) {
+void MatrixController::draw_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b) {
 	for (int j = start_y; j <= end_y; j++) {
 		MatrixController::update_pixel(x, j, r, g, b);
 	}
@@ -236,11 +243,4 @@ extern "C" void PIT0_IRQHandler(void)
 	MatrixController::write_matrix();
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE(1);
-}
-
-int main() {
-	MatrixController::init_matrix();
-	MatrixController::init_gpio();
-	MatrixController::init_timer();
-	while(1);
 }

@@ -421,7 +421,7 @@ int8_t Adafruit_BNO055::getTemp() {
  *  @return  vector from specified source
  */
 imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
-  imu::Vector<3> xyz = *(new imu::Vector<3>());
+  imu::Vector<3> xyz = imu::Vector<3>();
   uint8_t buffer[6];
   memset(buffer, 0, 6);
 
@@ -549,7 +549,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
   event->orientation.x = euler.x();
   event->orientation.y = euler.y();
   event->orientation.z = euler.z();
-	delete &euler;
+	//delete &euler;
   return true;
 }
 
