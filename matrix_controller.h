@@ -11,13 +11,11 @@
 class MatrixController {
 	
 	public:	
+		static void init();
 		static void update_pixel(int x, int y, bool r, bool g, bool b);
-		static void write_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b);
-		static void write_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b);
+		static void draw_line_vert(int start_x, int end_x, int y, bool r, bool g, bool b);
+		static void draw_line_horiz(int start_y, int end_y, int x, bool r, bool g, bool b);
 		static void write_matrix();
-		static void init_matrix();
-		static void init_timer();
-		static void init_gpio();
 		typedef struct {
 			bool r;
 			bool g;
@@ -26,6 +24,9 @@ class MatrixController {
 
 	private:
 		static pixel_t matrix[32][32];
+		static void init_matrix();
+		static void init_timer();
+		static void init_gpio();
 		static void set_rgb();
 		static void clear_row();
 		static void set_row(int row);
