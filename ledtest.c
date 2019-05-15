@@ -16,24 +16,24 @@ int color;
 
 void set_row(int r) {
 	if (r & 8){
-		GPIO_PinWrite(a_p, a_s, 1);
+		GPIO_PinWrite(d_p, d_s, 1);
 	} else {
-		GPIO_PinWrite(a_p, a_s, 0);
+		GPIO_PinWrite(d_p, d_s, 0);
 	}
 	if (r & 4){
-		GPIO_PinWrite(b_p, b_s, 1);
-	} else {
-		GPIO_PinWrite(b_p, b_s, 0);
-	}
-	if (r & 2){
 		GPIO_PinWrite(c_p, c_s, 1);
 	} else {
 		GPIO_PinWrite(c_p, c_s, 0);
 	}
-	if (r & 1){
-		GPIO_PinWrite(d_p, d_s, 1);
+	if (r & 2){
+		GPIO_PinWrite(b_p, b_s, 1);
 	} else {
-		GPIO_PinWrite(d_p, d_s, 0);
+		GPIO_PinWrite(b_p, b_s, 0);
+	}
+	if (r & 1){
+		GPIO_PinWrite(a_p, a_s, 1);
+	} else {
+		GPIO_PinWrite(a_p, a_s, 0);
 	}
 }
 
@@ -53,7 +53,7 @@ void clear_rgb() {
 	GPIO_PinWrite(b2_p, b2_s, 0);
 }
 
-void set_rgb(int c){
+void set_rgb(int c){	
 	if (c & 4){
 		GPIO_PinWrite(r1_p, r1_s, 1);
 		GPIO_PinWrite(r2_p, r2_s, 1);
@@ -126,24 +126,24 @@ void pin_setup() {
 	b2_s = 3;
 	GPIO_PinInit(b2_p, b2_s, &config);
 	
-	PORTC->PCR[0] = PORT_PCR_MUX(001); //A
-	a_p = GPIOC;
-	a_s = 0;
+	PORTB->PCR[2] = PORT_PCR_MUX(001); //A
+	a_p = GPIOB;
+	a_s = 2;
 	GPIO_PinInit(a_p, a_s, &config);
 	
-	PORTC->PCR[9] = PORT_PCR_MUX(001); //B
-	b_p = GPIOC;
-	b_s = 9;
+	PORTB->PCR[3] = PORT_PCR_MUX(001); //B
+	b_p = GPIOB;
+	b_s = 3;
 	GPIO_PinInit(b_p, b_s, &config);
 	
-	PORTC->PCR[8] = PORT_PCR_MUX(001); //C
-	c_p = GPIOC;
-	c_s = 8;
+	PORTB->PCR[10] = PORT_PCR_MUX(001); //C
+	c_p = GPIOB;
+	c_s = 10;
 	GPIO_PinInit(c_p, c_s, &config);
 	
-	PORTC->PCR[1] = PORT_PCR_MUX(001); //D
-	d_p = GPIOC;
-	d_s = 1;
+	PORTB->PCR[11] = PORT_PCR_MUX(001); //D
+	d_p = GPIOB;
+	d_s = 11;
 	GPIO_PinInit(d_p, d_s, &config);
 	
 	PORTD->PCR[0] = PORT_PCR_MUX(001); //LAT
@@ -172,42 +172,34 @@ void begin() {
 }
 
 int main() {
- 
-	row = 0; 
-	color = 0;
 	pin_setup();
 	begin();
 	//timer_setup();
 	
-	set_oe(); //disable LED output
-	set_lat(); //latch data from previous interrupt
-	
-	clear_row();
-	
-	//set_row(row);
-	GPIO_PinWrite(a_p, a_s, 0);
-	GPIO_PinWrite(b_p, b_s, 0);
-	GPIO_PinWrite(c_p, c_s, 1);
-	GPIO_PinWrite(d_p, d_s, 0);
-	
-	clear_lat(); //latch down
-	clear_oe(); //reenable output
-	
-	for (int i = 0; i < 128; i++){
-		clear_clk();
-		clear_rgb();
-		GPIO_PinWrite(r1_p, r1_s, 1);
-		GPIO_PinWrite(r2_p, r2_s, 1);
-		set_clk();
+	while(1) {
+		for (int row = 0; row < 16; row++) {
+			set_oe(); //disable LED output
+			clear_oe();
+			
+			set_lat(); //latch data from previous interrupt
+			
+			clear_row();
+			
+			set_row(row);
+			
+			clear_lat(); //latch down
+			
+			for (int i = 0; i < 32; i++){
+				clear_clk();
+				clear_rgb();
+				set_rgb(2);
+				set_clk();
+			}
+			
+			//clear_oe(); //reenable output
+			
+		}
 	}
-	
-	clear_clk();
-	
-	set_lat();
-	
-	while(1);
-	
-
 }
 
 
@@ -217,33 +209,6 @@ void PIT0_IRQHandler(void)
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(0); //disable interrupts
 	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF(1); //reset flag
 	
-	set_oe(); //disable LED output
-	set_lat(); //latch data from previous interrupt
-	
-	set_row(row);
-	
-	clear_lat(); //latch down
-	clear_oe(); //reenable output
-	
-	for (int i = 0; i < 32; i++){
-		clear_clk();
-		clear_rgb();
-		set_rgb(color);
-		set_clk();
-	}
-	
-	if (row == 15){
-		row = 0;
-		if (color == 7){
-			color = 1;
-		} else {
-			color ++;
-		}
-	} else {
-		row ++;
-	}
-	
-	clear_clk();
 	
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE(1);
