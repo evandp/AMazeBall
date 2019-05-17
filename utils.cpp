@@ -2,8 +2,8 @@
 
 #define N 10000
 
-/*!
- *  @brief  Delays the processor for milli milliseconds
+/**
+ *  Delays the processor for milli milliseconds
  *  @param  milli
  *          the number of milliseconds to delay
  */
@@ -18,6 +18,7 @@ void Utils::delay(int milli) {
 	}
 }
 
+/**	Represents end game screen */
 int Utils::game_over[32][32] = {
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,},
 	{1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,},
@@ -52,7 +53,13 @@ int Utils::game_over[32][32] = {
 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,},
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,},
 };
-	
+
+/** 
+	Represents properties of Maze 1 
+		1 =  barrier
+		2 = food item
+		3 = initial ball position
+*/	
 int Utils::maze1[32][32] = {
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,},
 	{1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,},
