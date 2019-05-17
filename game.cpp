@@ -2,7 +2,7 @@
 #include "game.h"
 
 #define RATE 100.0f
-#define G 245.25f // acceleration due to gravity in pixels per second^2
+#define G 490.5f // acceleration due to gravity in pixels per second^2
 #define M_PI 3.14159265358979323846
 
 int round(float x) {
@@ -16,9 +16,17 @@ Game::ball_t ball = {
 	0.0f,
 };
 
-int score = -1;
+int score = 0;
 
 int maze[32][32];
+
+float time = 0.0f;
+
+bool blink_toggle = false;
+
+bool is_starting = true;
+
+float start_countdown = 1.5f;
 
 void Game::init_maze() {
 	for (int i = 0; i < 32; i++) {
@@ -28,9 +36,9 @@ void Game::init_maze() {
 				if (i == 0 || i == 6 || i == 31 || j == 0 || j == 31) {
 					MatrixController::update_pixel(i, j, 0, 0, 1);
 				}
-				else if (1 <= i && i <= 5) {
+				else if (1 <= i && i <= 5 && !is_starting) {
 					MatrixController::update_pixel(i, j, 1, 1, 0);
-				} else {
+				} else if (!is_starting) {
 					MatrixController::update_pixel(i, j, 1, 0, 0);
 				}
 			}
@@ -41,7 +49,7 @@ void Game::init_maze() {
 			}
 		}
 	}
-	update_score();
+	if (!is_starting) update_score();
 }
 
 void Game::start() {
@@ -78,7 +86,6 @@ bool edge_check(float prev_x, float prev_y, float curr_x, float curr_y, int x_di
 }
 
 void Game::update_score() {
-	score++;
 	int msd = score / 10; // most significant digit
 	int lsd = score % 10; // leasat significant digit
 	MatrixController::draw_number(msd, 1, 23, 1, 1, 0);
@@ -86,7 +93,6 @@ void Game::update_score() {
 }
 
 void Game::update_ball() {
-	__disable_irq();
 	MatrixController::update_pixel(round(ball.pos_x), round(ball.pos_y), 0, 0, 0);
 	float prev_x = ball.pos_x;
 	float prev_y = ball.pos_y;
@@ -205,23 +211,100 @@ void Game::update_ball() {
 	
 	if (maze[round(ball.pos_x)][round(ball.pos_y)] == 2) {
 		maze[round(ball.pos_x)][round(ball.pos_y)] = 0;
+		score++;
 		update_score();
 	}
 	
 	MatrixController::update_pixel(round(ball.pos_x), round(ball.pos_y), 0, 1, 0);
-	__enable_irq();
+}
+
+void Game::update_timer() {
+	time += 1 / RATE;
+
+	float time_remaining = 60.0f - time;
+	float blink_rate = 60.0f;
+	if (time_remaining < 5.0f) {
+		blink_rate = 0.05f;
+	}
+	else if (time_remaining < 15.0f) {
+		blink_rate = 0.125f;
+	}
+	else if (time_remaining < 30.0f) {
+		blink_rate = 0.25f;
+	}
+	if (fmod(time_remaining, blink_rate) < 0.01f) {
+		blink_toggle = !blink_toggle;
+	}
+	if (time < 61.0f) {
+		if (blink_toggle) {
+			MatrixController::draw_line_horiz(1, (int)(time/2), 0, 0, 0, 1);
+		} else {
+			MatrixController::draw_line_horiz(1, (int)(time/2), 0, 1, 0, 0);
+		}
+	}
+
 }
 
 void Game::loop() {
-	Game::calc_vel();
-	update_ball();
+	if (is_starting) {
+		start_countdown -= 1 / RATE;
+		if (start_countdown < 1.5f) {
+			MatrixController::draw_number(3, 1, 8, 1, 0, 0);
+		}
+		if (start_countdown < 1.0f) {
+			MatrixController::draw_number(2, 1, 14, 1, 1, 0);
+		}
+		if (start_countdown < 0.5f) {
+			MatrixController::draw_number(1, 1, 20, 0, 1, 0);
+		}
+		if (start_countdown < 0.0f) {
+			MatrixController::clear_number(1, 8);
+			MatrixController::clear_number(1, 14);
+			MatrixController::clear_number(1, 20);
+			is_starting = false;
+			Game::init_maze();
+		}
+	} else {
+		Game::calc_vel();
+		update_ball();
+		update_timer();
+	}
+}
+
+void Game::game_over() {
+	MatrixController::draw_line_horiz(1, 30, 0, 1, 0, 0);
+	for (int i = 0; i < 32; i++) {
+		for (int j = 0; j < 32; j++) {
+			maze[i][j] = Utils::game_over[i][j];
+			if (maze[i][j] == 1) {
+				if (i == 0) continue;
+				if (i == 6 || i == 31 || j == 0 || j == 31) {
+					MatrixController::update_pixel(i, j, 0, 0, 1);
+				}
+				else if (1 <= i && i <= 5) {
+					continue;
+				} else {
+					MatrixController::update_pixel(i, j, 1, 0, 0);
+				}
+			} else {
+				MatrixController::update_pixel(i, j, 0, 0, 0);
+			}
+		}
+	}
+	update_score();
 }
 
 extern "C" void PIT2_IRQHandler(void)
 {
 	PIT->CHANNEL[2].TCTRL = PIT_TCTRL_TEN(0); //disable interrupts
 	PIT->CHANNEL[2].TFLG = PIT_TFLG_TIF(1); //reset flag
+	__disable_irq();
 	Game::loop();
-	PIT->CHANNEL[2].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
-	PIT->CHANNEL[2].TCTRL |= PIT_TCTRL_TIE(1);
+	__enable_irq();
+	if (time >= 60.0f) {
+		Game::game_over();
+	} else {
+		PIT->CHANNEL[2].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
+		PIT->CHANNEL[2].TCTRL |= PIT_TCTRL_TIE(1);
+	}
 }
