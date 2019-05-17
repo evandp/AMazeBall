@@ -1,8 +1,19 @@
 #include "matrix_controller.h"
 
+/** 
+	This represents the GPIO port that each pin resides on.
+*/
 GPIO_Type *r1_p, *g1_p, *b1_p, *r2_p, *g2_p, *b2_p, *a_p, *b_p, *c_p, *d_p, *lat_p, *oe_p, *clk_p;
+
+/** 
+	This represents the pin number of each pin.
+*/
 int r1_s, g1_s, b1_s, r2_s, g2_s, b2_s, a_s, b_s, c_s, d_s, lat_s, oe_s, clk_s;
 
+/**
+	This is the internal representation of the LED display; this is the data
+	that is sent to the physical LED matrix panel.
+*/
 MatrixController::pixel_t MatrixController::matrix[32][32] = {};
 
 	
@@ -53,7 +64,7 @@ void MatrixController::init_timer() {
 /** 
 	Sets up the pins which interface the board and the matrix to GPIO. 
 	Also initializes the X_s, X_p variables, which allow for easier 
-	updating of the board later. See the above documentation for details
+	updating of the board later. See the project report for details
 	about which pins connect to which ports on the LED matrix.
 */
 
