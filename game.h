@@ -12,7 +12,9 @@ class Game {
 	*/
 		static void start();
 	
-	// TODO
+	/**
+		Displays end game screen and the player's final score on the LED matrix.
+	*/
 		static void game_over();
 	
 	/**
@@ -33,7 +35,9 @@ class Game {
 		
 	private:
 		
-	//TODO
+	/**
+		Displays countdown to start of game on LED matrix.
+	*/
 		static void start_sequence();
 	
 	/**
