@@ -1,5 +1,6 @@
 #include "game.h"
 
 int main() {
-	Game* g = new Game();
+	Game::start();
+	while(1);
 }

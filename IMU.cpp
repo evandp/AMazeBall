@@ -20,7 +20,7 @@ void IMU::begin() {
 }
 
 void IMU::begin_timer(){
-	int rate = 30;
+	int rate = 10;
 	
 	NVIC_EnableIRQ(PIT1_IRQn); //enable PIT1 interrupts
 	
@@ -30,6 +30,7 @@ void IMU::begin_timer(){
 	PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / rate; //set timer to 1 second
 	PIT->CHANNEL[1].TCTRL = PIT_TCTRL_TIE(1); //enable interrupts
 	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN(1);
+	NVIC_SetPriority(PIT1_IRQn, 0);
 }
 
 double IMU::get_pitch(){

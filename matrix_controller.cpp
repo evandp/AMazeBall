@@ -29,7 +29,7 @@ void MatrixController::init_timer() {
 	SIM->SCGC6 = SIM_SCGC6_PIT_MASK; // Enable clock to PIT module
 	PIT->MCR = PIT_MCR_MDIS(0);
 	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF(1); //clear interrupt flag
-	PIT->CHANNEL[0].LDVAL = DEFAULT_SYSTEM_CLOCK / 250; //set timer to 1/60 seconds
+	PIT->CHANNEL[0].LDVAL = DEFAULT_SYSTEM_CLOCK / 150; //set timer to 1/300 seconds
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TIE(1); //enable interrupts
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN(1);
 	NVIC_SetPriority(PIT0_IRQn, 0);
@@ -240,7 +240,9 @@ extern "C" void PIT0_IRQHandler(void)
 {
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(0); //disable interrupts
 	PIT->CHANNEL[0].TFLG = PIT_TFLG_TIF(1); //reset flag
+	__disable_irq();
 	MatrixController::write_matrix();
+	__enable_irq();
 	PIT->CHANNEL[0].TCTRL = PIT_TCTRL_TEN(1); //reenable interrupts
 	PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE(1);
 }

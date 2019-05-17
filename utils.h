@@ -3,11 +3,11 @@
 #ifndef __3420utils_H__
 #define __3420utils_H__
 
-class utils {
+class Utils {
 
 public:
- static void delay(int milli);
-	
+  static void delay(int milli);
+	static bool maze1[32][32];
 };
 
 #endif

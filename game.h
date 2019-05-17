@@ -5,22 +5,20 @@
 class Game {
 	
 	public:
-		Game();
-		void terminate();
-	
-	private:
-		void init_ball();
-		void loop();
-		void calc_vel();
-		void update_ball();
-		bool is_running;
+		static void start();
+		static void terminate();
+		static void loop();
 	
 		typedef struct {
-			int pos_x;
-			int pos_y;
-			float vel_x;
-			float vel_y;
+			float pos_x; // pixel location in x
+			float pos_y; // pixel location in y
+			float vel_x; // pixels per second in x
+			float vel_y; // pixels per second in y
 		} ball_t;
 		
-		ball_t ball;
+	private:
+		static void init_maze();
+		static void init_timer();
+		static void calc_vel();
+		static void update_ball();		
 };
