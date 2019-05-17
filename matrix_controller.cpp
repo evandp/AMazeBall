@@ -325,16 +325,29 @@ void MatrixController::draw_line_horiz(int start_y, int end_y, int x, bool r, bo
 #define draw_c_seg(x, y, r, g, b) (draw_line_vert(y+2, y+4, x+2, r, g, b))
 #define draw_e_seg(x, y, r, g, b) (draw_line_vert(y+2, y+4, x, r, g, b))
 
+/** Clears any written number on the board. Should be called before writing a new number 
+		@param y row of the top-left corner of the 5x3 rectangle
+		@param x col of the top-left corner of the 5x3 rectangle
+*/
+
+void MatrixController::clear_number(int y, int x) {
+	for (int i = y; i < y+5; i++) {
+		for (int j = x; j < x+3; j++) {
+			update_pixel(i, j, 0, 0, 0);
+		}
+	}
+}
 
 /** 
 	Draws a number of the given color in the 5x3 rectangle with the specified top-left corner.
 		@param y row of the top-left corner of the 5x3 rectangle
-		@param x col of the top-left corner of teh 5x3 rectangle
+		@param x col of the top-left corner of the 5x3 rectangle
 		@param r RED value
 		@param g GREEN value
 		@param b BLUE value
 */
 void MatrixController::draw_number(int num, int y, int x, bool r, bool g, bool b){
+	clear_number(y, x);
 	switch (num){
 		case 0:
 			draw_a_seg(x, y, r, g, b);

@@ -20,5 +20,6 @@ class Game {
 		static void init_maze();
 		static void init_timer();
 		static void calc_vel();
-		static void update_ball();		
+		static void update_ball();
+		static void update_score();
 };

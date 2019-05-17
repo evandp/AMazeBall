@@ -7,7 +7,7 @@ class Utils {
 
 public:
   static void delay(int milli);
-	static bool maze1[32][32];
+	static int maze1[32][32];
 };
 
 #endif

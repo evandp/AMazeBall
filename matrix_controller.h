@@ -103,4 +103,7 @@ class MatrixController {
 		
 	/** Sets the R2, G2, B2, pins to the logic represented by the given color. */
 		static void set_rgb_bottom(int c);
+		
+	/** Clears any written number on the board. Should be called before writing a new number */
+		static void clear_number(int y, int x);
 };
