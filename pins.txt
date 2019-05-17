@@ -1,0 +1,13 @@
+R1 - D2 = PTB9
+G1 - PTC17
+B1 - D4 = PTB23
+R2 - PTC16
+G2 - D6 = PTC2
+B2 - D7 = PTC3
+A - A0 = PTB2 
+B - A1 = PTB3 
+C - A2 = PTB10 
+D - A3 =  PTB11 
+LAT - D10 = PTD0
+OE - D9 = PTC4
+CLK - D8 = PTC12
