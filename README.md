@@ -19,3 +19,9 @@ The IMU uses I2C and the LED Matrix has a custom communication protocol that we 
 
 Here is a link to a video of the project working: https://youtu.be/qpapZ6arSPE
 
+## Sources
+
+The communication with both the IMU and LED Matrix was heavily based on the provided libraries. The IMU required mild modifications while the LED Matrix required a rewrite. Nonetheless, here are links to the other repositories that we used:
+
+- IMU: https://github.com/adafruit/Adafruit_BNO055
+- LED Matrix: https://github.com/adafruit/RGB-matrix-Panel
